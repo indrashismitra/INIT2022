@@ -1,0 +1,7 @@
+DATE,TIME,CONSOLELOG
+08/14/2018,07:57:01.627682,Network Connection = True
+08/14/2018,07:57:01.627682,Outlook Opened
+08/14/2018,07:57:01.743532,"FireFox Opened.
+https://wearlenses.slack.com/ Opened.
+https://trello.com/b/H7f9C7jE/welcome-board Opened.
+https://kallysoft-alcon.atlassian.net/issues/?filter=15181&jql=reporter%20in%20(currentUser())%20ORDER%20BY%20updated%20DESC%2C%20created%20DESC%2C%20key%20ASC%2C%20summary%20ASC Opened"

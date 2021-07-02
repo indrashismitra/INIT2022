@@ -1,0 +1,31 @@
+Typical morning
+
+1. Turn on Laptop;
+2. Connect to Network;
+    if Network Connection Issue exists
+        {
+            if Connected to Network already
+            {
+                Disconnect from current network;
+            };
+            Open network internet settings;
+            Connect to Guest Multi Day Network;
+            if login required for network
+            {
+              Login to network;
+            };
+            Close browser tab
+        };
+3. Wait 2 minutes
+4. Open Microsoft Outlook [DONE]
+5. Open FireFox[DONE]
+6. Navigate to Wearlenses.Slack in FireFox[DONE]
+7. Open new tab in FireFox[DONE]
+8. Navigate to Jira - InContact EMEA project[DONE]
+9. Open Excel Document (automation log file)
+10. Write on first empty row
+    {
+        Date;
+        Time;
+        Whatever is written in the Console;
+    }
