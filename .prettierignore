@@ -1,0 +1,43 @@
+# Python-specific stuff
+__pycache__
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# system files
+.DS_Store
+
+# PID files
+.*.pid
+
+# Log folder
+logs/
+
+# Config folder
+configs/
+uwsgiconfigs/
+config.ini
+/*.ini
+!uwsgi_cache.ini
+!uwsgi_shared.ini
+
+# User created code
+userdispatch.py
+
+# Ignore virtual environment folder
+venv/
+
+.idea/
+.vscode/
+.vscode-server/
+/.github/pull_request_template.md
+
+# Ignore generated code
+/static/gen/
+
+# Ignore code not written by us
+/static/scripts/autolinker.js
+/static/scripts/tablesort.js
+/static/scripts/range.js
+/static/scripts/clr.queue.js
+/static/css/range.css

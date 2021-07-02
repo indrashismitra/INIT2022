@@ -1,0 +1,24 @@
+[flake8]
+max-line-length = 120
+exclude = configs/*,install/*,venv/*,pajbot/scripts/*,__pycache__/*,requirements/*,static/*,templates/*,uwsgiconfigs/*,.git/*,userdispatch.py,src/*,__init__.py
+# see: https://flake8.readthedocs.io/en/latest/user/violations.html#selecting-violations-with-flake8
+select = E, F, W, C90, B950
+ignore = E123,E126,E127,E128,E501,E131,E722,Q003,Q000,W503,E203
+application-import-names = pajbot
+import-order-style = smarkets
+
+# E123 = closing bracket does not match indentation of opening bracket’s line
+# E126 = continuation line over-indented for hanging indent
+# E127 = continuation line over-indented for visual indent
+# E128 = continuation line under-indented for visual indent
+# E501 = line too long (82 > 79 characters)
+# E722 = don't use bare except (lol)
+# Q003 = Change outer quotes to avoid escaping inner quotes
+# Q000 = Remove bad quotes
+# W503 = line break before binary operator
+# E203 = whitespace before :
+
+# Unused
+# E302 = expected 2 blank lines, found 0
+# F401 = module imported but unused
+# I101 = The names in your from import are in wrong order

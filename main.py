@@ -1,69 +1,74 @@
-# Import the Qiskit SDK
-import math, argparse, warnings
-from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister, execute, register
+#!/usr/bin/env python3
+import logging
+import os
+import signal
+import sys
 
-warnings.filterwarnings("ignore")
+from pajbot.bot import Bot
+from pajbot.utils import parse_args
 
-MAX_QUBITS = 5
-QX_URL = "https://quantumexperience.ng.bluemix.net/api"
+try:
+    basestring
+except NameError:
+    basestring = str
 
-def parse_input():
-  parser = argparse.ArgumentParser()
-  parser.add_argument('max', metavar='n', type=int, nargs='?', default=16, help='a maximum integer to generate')
-  parser.add_argument('--remote', action='store_true', default=False, help='run command on real remote quantum processor')
-  parser.add_argument('--qx-token', nargs='?', help='api token for IBM Q Experience remote backend')
-  args = parser.parse_args()
+# XXX: What does this achieve exactly?
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-  if args.remote and args.qx_token is None:
-    parser.error("--remote requires --qx-token")
+log = logging.getLogger(__name__)
 
-  next_power = next_power_of_2(args.max)
-  if (next_power > args.max):
-    print(f"Rounding input {args.max} to next power of 2: {next_power}")
-    args.max = next_power
 
-  return args
+def run(args):
+    from pajbot.utils import load_config
 
-def next_power_of_2(n):
-  return int(math.pow(2, math.ceil(math.log(n, 2))))
+    config = load_config(args.config)
 
-def bit_from_counts(counts):
-    return [k for k, v in counts.items() if v == 1][0]
+    if "main" not in config:
+        log.error("Missing section [main] in config")
+        sys.exit(1)
 
-def num_bits(n):
-  return math.floor(math.log(n, 2)) + 1
+    if "sql" in config:
+        log.error(
+            "The [sql] section in config is no longer used. See the example config for the new format under [main]."
+        )
+        sys.exit(1)
 
-def get_register_sizes(n, max_qubits):
-  register_sizes = [max_qubits for i in range(int(n / max_qubits))]
-  remainder = n % max_qubits
-  return register_sizes if remainder == 0 else register_sizes + [remainder]
+    if "db" not in config["main"]:
+        log.error("Missing required db config in the [main] section.")
+        sys.exit(1)
 
-def random_int(max, remote=False):
-  bits = ''
-  n_bits = num_bits(max - 1)
-  register_sizes = get_register_sizes(n_bits, MAX_QUBITS)
-  backend = "ibmqx4" if remote else "local_qasm_simulator"
+    pajbot = Bot(config, args)
 
-  for x in register_sizes:
-    q = QuantumRegister(x)
-    c = ClassicalRegister(x)
-    qc = QuantumCircuit(q, c)
+    pajbot.connect()
 
-    qc.h(q)
-    qc.measure(q, c)
+    def on_sigterm(signal, frame):
+        pajbot.quit_bot()
+        sys.exit(0)
 
-    job_sim = execute(qc, backend, shots=1)
-    sim_result = job_sim.result()
-    counts = sim_result.get_counts(qc)
+    signal.signal(signal.SIGTERM, on_sigterm)
 
-    bits += bit_from_counts(counts)
-  return int(bits, 2)
+    try:
+        pajbot.start()
+    except KeyboardInterrupt:
+        pajbot.quit_bot()
 
-input = parse_input()
 
-if input.remote:
-  register(input.qx_token, QX_URL)
+def handle_exceptions(exctype, value, tb):
+    log.error("Logging an uncaught exception", exc_info=(exctype, value, tb))
 
-result = random_int(input.max, input.remote)
 
-print(result)
+if __name__ == "__main__":
+    from pajbot.utils import init_logging, dump_threads
+
+    def on_sigusr1(signal, frame):
+        log.info("Process was interrupted with SIGUSR1, dumping all thread stack traces")
+        dump_threads()
+
+    # dump all stack traces on SIGUSR1
+    signal.signal(signal.SIGUSR1, on_sigusr1)
+    sys.excepthook = handle_exceptions
+
+    args = parse_args()
+
+    init_logging("pajbot")
+    run(args)
